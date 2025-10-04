@@ -1,0 +1,71 @@
+UserController
+
+<?php
+
+namespace App\Controllers;
+
+use App\Controllers\BaseController;
+use App\Models\UserModel;
+
+class UserController extends BaseController
+{
+    public function create()
+    {
+        return view('create_user');
+    }
+
+    public function list()
+    {
+        $userModel = new UserModel();
+        $data['users'] = $userModel->findAll(); // use plural for list
+        return view('list_users', $data);
+    }
+
+    public function store()
+    {
+        $userModel = new UserModel();
+
+        $data = [
+            'firstname'  => $this->request->getPost('firstname'),
+            'middlename' => $this->request->getPost('middlename'),
+            'lastname'   => $this->request->getPost('lastname'),
+        ];
+
+        $userModel->insert($data);
+
+        return redirect()->to('/user/create')->with('message', 'User inserted successfully');
+    }
+
+    public function edit($id)
+    {
+        $userModel = new UserModel();
+        $data['user'] = $userModel->find($id);
+
+        return view('edit_user', $data);
+    }
+
+    public function delete($id)
+    {
+        $userModel = new UserModel();
+        $userModel->delete($id);
+
+        return redirect()->to('/user/list')->with('message', 'User deleted successfully');
+    }
+
+   public function update($id)
+{
+    $userModel = new UserModel();
+
+    $data = [
+        'firstname'  => $this->request->getPost('firstname'),
+        'middlename' => $this->request->getPost('middlename'),
+        'lastname'   => $this->request->getPost('lastname'),
+    ];
+
+    $userModel->update($id, $data);
+
+    return redirect()->to('/user/edit/'.$id)->with('message', 'User updated successfully');
+}
+
+
+}
